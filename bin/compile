@@ -42,8 +42,8 @@ done
 
 topic "fixing chromium"
 # patch chromium-browser to use /app/... paths
-sed -i.bak s/usr\\/lib/~\\/uli/g $1/.apt/usr/bin/chromium-browser
-sed -i.bak s/usr\\/bin/~\\/ubi/g $1/.apt/usr/bin/chromium-browser
+sed -i.bak s/\\/usr\\/lib/~\\/uli/g $1/.apt/usr/bin/chromium-browser
+sed -i.bak s/\\/usr\\/bin/~\\/ubi/g $1/.apt/usr/bin/chromium-browser
 
 topic "fixing Xvfb fonts"
 # symlink libs to where Xvfb searches
