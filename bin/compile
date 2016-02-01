@@ -32,13 +32,17 @@ apt-get $APT_OPTIONS update | indent
 
 topic "Fetching .debs for xvfb and chromium"
 
-apt-get $APT_OPTIONS -y -d install chromium-browser chromium-chromedriver x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic libxfont1 xvfb unzip | indent
+apt-get $APT_OPTIONS -y -d install chromium-browser xvfb | indent
 
 topic "Installing debs"
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
   dpkg -x $DEB $BUILD_DIR/.apt/
 done
+
+topic "fixing chromium"
+# patch chromium-browser to use /app/... paths
+sed -i.bak s/usr\\/lib\\/uli/g $1/.apt/usr/bin/chromium-browser
 
 topic "fixing Xvfb fonts"
 # symlink libs to where Xvfb searches
@@ -50,6 +54,7 @@ sed -i.bak s/usr\\/bin/app\\/ubi/g $1/.apt/usr/bin/Xvfb
 sed -i.bak s/usr\\/share\\/fonts/app\\/usr-s-fonts/g $1/.apt/usr/bin/Xvfb
 # create symlinks for Xvfb to use /app/.apt/usr/...
 ln -s /app/.apt/usr/bin $1/ubi
+ln -s /app/.apt/usr/lib $1/uli
 ln -s /app/.apt/usr/share/fonts $1/usr-s-fonts
 
 # run mkfontdir with binaries from inside dyno
@@ -59,7 +64,7 @@ find $1/.apt/usr/share/fonts/X11 -type d | xargs $1/.apt/usr/bin/mkfontdir
 
 topic "Writing profile script"
 mkdir -p $BUILD_DIR/.profile.d
-cat <<EOF >$BUILD_DIR/.profile.d/000_chrome.sh
+cat <<EOF >$BUILD_DIR/.profile.d/000_chromium.sh
 export PATH="\$HOME/.apt/usr/bin:.apt/usr/bin:\$PATH"
 export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LD_LIBRARY_PATH"
 export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
