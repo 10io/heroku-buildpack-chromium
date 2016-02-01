@@ -23,7 +23,7 @@ APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
 
 CHROMIUM_FILE_NAME=Chromium-49.0.2606.0-x86_64.AppImage
-CHROMIUM_APPIMAGE=https://bintray.com/artifact/download/probono/AppImages/${FILE_NAME}
+CHROMIUM_APPIMAGE=https://bintray.com/artifact/download/probono/AppImages/${CHROMIUM_FILE_NAME}
 
 mkdir -p "$APT_CACHE_DIR/archives/partial"
 mkdir -p "$APT_STATE_DIR/lists/partial"
